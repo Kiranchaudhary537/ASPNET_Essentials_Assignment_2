@@ -1,4 +1,5 @@
-﻿using EmployeeManagement.Models;
+﻿using EmployeeManagement.Dtos;
+using EmployeeManagement.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -33,21 +34,36 @@ namespace EmployeeManagement.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Employee>> AddEmployee(Employee employee)
+        public async Task<ActionResult<Employee>> AddEmployee(EmployeeDto employeeDto)
         {
+            var employee = new Employee
+            {
+                Id=employeeDto.Id,
+                Name = employeeDto.Name,
+                Age = employeeDto.Age,
+                DepartmentId = employeeDto.DepartmentId,
+                Salary = employeeDto.Salary
+            };
             _context.Employees.Add(employee);
             await _context.SaveChangesAsync();
             return CreatedAtAction(nameof(GetEmployee), new { id = employee.Id }, employee);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> EditEmployee(int id, Employee employee)
+        public async Task<IActionResult> EditEmployee(int id, EmployeeDto employeeDto)
         {
-            if (id != employee.Id)
+            if (id != employeeDto.Id)
             {
                 return BadRequest();
             }
-
+            var employee = new Employee
+            {
+                Id = employeeDto.Id,
+                Name = employeeDto.Name,
+                Age = employeeDto.Age,
+                DepartmentId = employeeDto.DepartmentId,
+                Salary = employeeDto.Salary
+            };
             _context.Entry(employee).State = EntityState.Modified;
 
             try

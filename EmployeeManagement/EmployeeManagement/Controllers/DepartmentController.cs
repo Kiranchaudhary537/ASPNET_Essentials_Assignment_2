@@ -1,4 +1,5 @@
-﻿using EmployeeManagement.Models;
+﻿using EmployeeManagement.Dtos;
+using EmployeeManagement.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -33,20 +34,32 @@ namespace EmployeeManagement.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Department>> AddDepartment(Department department)
+        public async Task<ActionResult<Department>> AddDepartment(DepartmentDto departmentDto)
         {
+            var department = new Department
+            {
+                Id = departmentDto.Id,
+                DepartmentName = departmentDto.DepartmentName
+            };
+
             _context.Departments.Add(department);
             await _context.SaveChangesAsync();
             return CreatedAtAction(nameof(GetDepartment), new { id = department.Id }, department);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> EditDepartment(int id, Department department)
+        public async Task<IActionResult> EditDepartment(int id, DepartmentDto departmentDto)
         {
-            if (id != department.Id)
+            if (id != departmentDto.Id)
             {
                 return BadRequest();
             }
+
+            var department = new Department
+            {
+                Id = departmentDto.Id,
+                DepartmentName = departmentDto.DepartmentName
+            };
 
             _context.Entry(department).State = EntityState.Modified;
 
